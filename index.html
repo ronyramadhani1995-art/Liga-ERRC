@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ERRC League Dashboard</title>
+<style>
+:root{--bg:#0b131a;--card:rgba(21, 32, 43, 0.92);--tx:#f7f9f9;--mut:#8899a6;--pri:#1b4d3e;--acc:#00ba7c;--line:#253341;--gold:#ffd700;--red:#f4212e;--inp:#1e2732;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0;color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;min-height:100vh;
+  /* BACKGROUND EPIC LIONEL MESSI & CRISTIANO RONALDO */
+  background: linear-gradient(rgba(11, 19, 26, 0.82), rgba(11, 19, 26, 0.92)), 
+              url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1600&auto=format&fit=crop') no-repeat center center fixed;
+  background-size: cover;
+}
+
+header{
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.95) 0%, rgba(2, 44, 34, 0.95) 100%), radial-gradient(circle at top right, rgba(0,186,124,0.3), transparent 50%);
+  border-bottom: 3px solid var(--gold);
+  color:#fff; padding:18px 16px; border-radius:0 0 28px 28px; position:relative; 
+  box-shadow:0 6px 20px rgba(0,0,0,0.6);
+  backdrop-filter: blur(6px);
+  display:flex; align-items:center; gap:14px;
+}
+.header-logo{
+  width:76px; height:76px; border-radius:50%; border:2px solid var(--gold);
+  background:#181818; flex:none; box-shadow:0 0 14px rgba(255,215,0,0.5);
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.header-logo svg{width:100%; height:100%; object-fit:contain;}
+.header-info{flex:1; min-width:0;}
+header h1{color:#fff; font-size:20px; font-weight:800; letter-spacing:.5px; margin:0; text-shadow:0 2px 4px rgba(0,0,0,0.4); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+header .sub{color:#a7f3d0; font-size:12px; margin-top:2px; display:flex; gap:6px; align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:#34d399;display:inline-block}
+
+.header-btns{position:absolute; right:14px; top:14px; display:flex; gap:6px; align-items:center}
+.hdr-btn{border:0; background:rgba(255,255,255,0.15); color:#fff; border-radius:20px; padding:6px 12px; font-size:11px; font-weight:600; cursor:pointer; backdrop-filter:blur(4px)}
+.hdr-btn.admin-on{background:var(--gold); color:#000}
+.audio-btn{background:rgba(255,215,0,0.2); border:1px solid var(--gold); color:var(--gold); width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px}
+
+.season-bar{margin-top:10px; display:flex; gap:8px; align-items:center; background:rgba(0,0,0,0.4); padding:6px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.1)}
+.season-bar label{margin:0; color:#cbd5e1; font-size:11px; font-weight:600}
+.season-bar select{flex:1; background:#0f172a; border:1px solid rgba(255,215,0,0.3); border-radius:6px; padding:4px 8px; font-size:12px; font-weight:600; color:#fff}
+
+main{padding:14px 12px 90px; max-width:720px; margin:0 auto}
+.cards{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px}
+.c{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; box-shadow:0 2px 6px rgba(0,0,0,0.3); backdrop-filter: blur(4px)}
+.cards .c:first-child{background:linear-gradient(135deg, rgba(4, 120, 87, 0.9), rgba(6, 95, 70, 0.9)); border:1px solid #10b981}.cards .c:first-child b,.cards .c:first-child span{color:#fff}.cards .c:first-child .bar{background:rgba(255,255,255,0.3)}.cards .c:first-child .bar i{background:#f59e0b}
+.c b{display:block; font-size:18px; color:var(--gold)}
+.c span{font-size:11px; color:var(--mut)}
+
+.bar{height:6px; background:var(--line); border-radius:4px; overflow:hidden; margin-top:6px}.bar i{display:block; height:100%; background:var(--acc)}
+.wrap{overflow-x:auto; background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.4); backdrop-filter: blur(4px)}
+table{border-collapse:collapse; width:100%; font-size:13px}
+th,td{padding:10px 8px; text-align:center; white-space:nowrap}
+th{background:rgba(6, 78, 59, 0.95); color:#fff; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; position:sticky; top:0}
+td.t{text-align:left; max-width:140px; overflow:hidden; text-overflow:ellipsis; font-weight:600}
+tr+tr td{border-top:1px solid var(--line)}
+tr.g td{background:rgba(255,215,0,0.15); font-weight:bold}
+tr.r td{background:rgba(244,33,46,0.15)}
+td.p{font-weight:700; color:var(--gold)}
+.note{font-size:11px; color:var(--mut); margin:8px 2px}
+
+.sc{width:56px; height:48px; text-align:center; font-size:22px; font-weight:700; border:2px solid var(--line); border-radius:8px; background:var(--inp); color:var(--tx)}
+.sc:focus{outline:none; border-color:var(--acc)}
+
+input.tx, select.tx{width:100%; border:1px solid var(--line); border-radius:10px; background:var(--inp); color:var(--tx); padding:10px; font:inherit}
+label{font-size:12px; color:var(--mut); display:block; margin:10px 0 4px}
+.btn{height:44px; border:0; border-radius:10px; background:var(--pri); color:#fff; font-size:14px; font-weight:600; width:100%; margin-top:10px; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+.btn.sec{background:transparent; color:#f4212e; border:1px solid #f4212e}
+.btn.sec2{background:transparent; color:#34d399; border:1px solid #34d399}
+
+tabs{position:fixed; left:0; right:0; bottom:0; display:flex; background:rgba(15, 23, 42, 0.95); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom,0px); z-index:100; box-shadow:0 -4px 10px rgba(0,0,0,0.4); backdrop-filter: blur(8px)}
+tabs button{flex:1; height:58px; border:0; background:none; color:var(--mut); font-size:9px; font-weight:600; cursor:pointer; transition:0.2s; padding:2px 1px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px}
+tabs button span{font-size:15px}
+tabs button.on{color:var(--gold); border-top:3px solid var(--gold); background:rgba(255,215,0,0.05)}
+
+#toast{position:fixed; left:50%; transform:translateX(-50%); bottom:72px; background:#1e293b; color:#fff; border:1px solid var(--line); padding:9px 14px; border-radius:20px; font-size:13px; opacity:0; transition:opacity .2s; pointer-events:none; max-width:90%; z-index:101; box-shadow:0 4px 12px rgba(0,0,0,0.4)}
+#toast.s{opacity:1}
+
+.bd{display:inline-flex; align-items:center; justify-content:center; border-radius:50%; object-fit:cover; background:var(--card); color:#fff; font-weight:700; vertical-align:middle; margin:0 6px 0 0; flex:none; border:1px solid rgba(255,215,0,0.4)}
+.fm{display:inline-flex; gap:3px}.fd{width:18px; height:18px; border-radius:50%; font-size:10px; line-height:18px; color:#fff; font-weight:700; font-style:normal; text-align:center}.fd.M{background:#00ba7c}.fd.S{background:#8899a6}.fd.K{background:#f4212e}
+
+.sh{font-size:14px; color:var(--gold); margin:16px 2px 8px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px}
+.sr{display:flex; align-items:center; gap:6px; padding:6px 0}.sr+.sr{border-top:1px solid var(--line)}.rk{width:18px; color:var(--mut); font-size:12px; font-weight:bold}.sn{width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; font-size:13px}.sb{flex:1; height:8px; background:var(--line); border-radius:4px; overflow:hidden}.sb i{display:block; height:100%; background:var(--gold)}.sr b{width:28px; text-align:right; color:var(--gold)}
+
+.tr{display:flex; align-items:center; gap:8px; margin-bottom:8px}.bdw{cursor:pointer; flex:none}.tn{flex:1}.x{width:42px; height:42px; border:1px solid var(--line); border-radius:10px; background:var(--card); color:#f4212e; cursor:pointer}
+.pod{display:flex; align-items:flex-end; justify-content:center; gap:8px; margin:8px 0 16px}
+.pd{flex:1; max-width:130px; text-align:center; background:var(--card); border:2px solid var(--line); border-radius:14px 14px 4px 4px; padding:10px 4px; box-shadow:0 4px 10px rgba(0,0,0,0.3); backdrop-filter: blur(4px)}
+.pd .nm{font-size:12px; font-weight:700; margin-top:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}.pd b{display:block; font-size:20px; color:var(--gold)}.pd small{color:var(--mut); font-size:10px}.md{font-size:22px}
+.pd.p1{min-height:160px; padding-top:14px; border-color:var(--gold); background:linear-gradient(180deg,rgba(255,215,0,0.2),var(--card))}.pd.p2{min-height:132px; border-color:#cbd5e1}.pd.p3{min-height:116px; border-color:#d97706}
+.ps{display:inline-block; width:22px; height:22px; line-height:22px; border-radius:50%; font-size:12px; font-weight:700; text-align:center}
+.ps.t1{background:var(--gold); color:#000}.ps.t2{background:#cbd5e1; color:#000}.ps.t3{background:#d97706; color:#fff}
+
+.stat-box{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:12px; box-shadow:0 4px 12px rgba(0,0,0,0.4); backdrop-filter: blur(4px)}
+.stat-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px}
+.stat-item{background:#111827; border:1px solid var(--line); padding:12px; border-radius:10px; text-align:center}
+.stat-item span{display:block; font-size:11px; color:var(--mut); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px}
+.stat-item b{font-size:18px; color:var(--gold)}
+
+.sched-banner{background:linear-gradient(135deg,rgba(4,120,87,0.9),rgba(2,44,34,0.9));border:2px solid var(--gold);border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 6px 16px rgba(0,0,0,0.5); backdrop-filter: blur(4px)}
+
+/* GALERI WINNERS CARDS - OBJECT-FIT CONTAIN AGAR TIDAK TERPOTONG */
+.gal-card{background:var(--card); border:2px solid var(--line); border-radius:14px; overflow:hidden; margin-bottom:16px; box-shadow:0 4px 12px rgba(0,0,0,0.4); backdrop-filter: blur(4px)}
+.gal-card.p1{border-color:var(--gold)}
+.gal-card.p2{border-color:#cbd5e1}
+.gal-card.p3{border-color:#d97706}
+.gal-header{padding:10px 14px; background:#111827; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line)}
+.gal-header b{font-size:14px; color:var(--gold)}
+.gal-img-wrap{width:100%; height:220px; background:#0b131a; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden}
+.gal-img-wrap img{width:100%; height:100%; object-fit:contain; background:#000}
+
+/* POTM CARD - OBJECT-FIT CONTAIN AGAR TIDAK TERPOTONG */
+.potm-card{background:linear-gradient(135deg, rgba(30,27,75,0.95), rgba(15,23,42,0.95)); border:2px solid var(--gold); border-radius:16px; overflow:hidden; margin-bottom:16px; box-shadow:0 6px 20px rgba(255,215,0,0.25); backdrop-filter: blur(4px)}
+.potm-header{background:rgba(255,215,0,0.15); padding:10px 14px; border-bottom:1px solid rgba(255,215,0,0.3); display:flex; justify-content:space-between; align-items:center}
+.potm-header b{color:var(--gold); font-size:14px; text-transform:uppercase; letter-spacing:1px}
+.potm-body{display:flex; flex-direction:column; align-items:center; padding:16px; text-align:center}
+.potm-img-wrap{width:100%; max-width:260px; height:240px; border-radius:14px; border:3px solid var(--gold); overflow:hidden; background:#0b131a; margin-bottom:12px; display:flex; align-items:center; justify-content:center; position:relative}
+.potm-img-wrap img{width:100%; height:100%; object-fit:contain; background:#000}
+
+/* PROFIL PESERTA GRID */
+.profile-card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; display:flex; gap:12px; align-items:center; backdrop-filter: blur(4px)}
+.profile-avatar{width:64px; height:64px; border-radius:50%; object-fit:cover; border:2px solid var(--gold); background:#111827; flex:none; display:flex; align-items:center; justify-content:center; font-weight:bold; color:var(--gold); overflow:hidden}
+.profile-info{flex:1; min-width:0}
+
+/* MODAL LOGIN */
+.modal-overlay{position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:999; display:flex; align-items:center; justify-content:center; padding:16px; backdrop-filter: blur(6px)}
+.modal-box{background:var(--card); border:2px solid var(--gold); border-radius:16px; width:100%; max-width:360px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.8)}
+</style>
+</head>
+<body>
+
+<!-- AUDIO BACKSOUND STADION / SEPAK BOLA -->
+<audio id="bg-audio" loop>
+  <source src="https://actions.google.com/sounds/v1/ambiences/stadium_soccer_ambience.ogg" type="audio/ogg">
+  <source src="https://cdn.freesound.org/previews/515/515853_6142179-lq.mp3" type="audio/mpeg">
+</audio>
+
+<header>
+  <!-- Vektor SVG HD BUMA ERRC LEAGUE -->
+  <div class="header-logo">
+    <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="250" cy="250" r="240" fill="#181818" stroke="#cca43b" stroke-width="12"/>
+      <circle cx="250" cy="250" r="226" fill="none" stroke="#181818" stroke-width="6"/>
+      <circle cx="250" cy="250" r="220" fill="none" stroke="#cca43b" stroke-width="4"/>
+      <circle cx="250" cy="250" r="160" fill="none" stroke="#cca43b" stroke-width="5"/>
+      <g fill="#cca43b">
+        <ellipse cx="140" cy="150" rx="10" ry="22" transform="rotate(-30 140 150)"/>
+        <ellipse cx="115" cy="200" rx="10" ry="22" transform="rotate(-15 115 200)"/>
+        <ellipse cx="105" cy="260" rx="10" ry="22" transform="rotate(0 105 260)"/>
+        <ellipse cx="115" cy="320" rx="10" ry="22" transform="rotate(20 115 320)"/>
+        <ellipse cx="140" cy="370" rx="10" ry="22" transform="rotate(40 140 370)"/>
+        <ellipse cx="360" cy="150" rx="10" ry="22" transform="rotate(30 360 150)"/>
+        <ellipse cx="385" cy="200" rx="10" ry="22" transform="rotate(15 385 200)"/>
+        <ellipse cx="395" cy="260" rx="10" ry="22" transform="rotate(0 395 260)"/>
+        <ellipse cx="385" cy="320" rx="10" ry="22" transform="rotate(-20 385 320)"/>
+        <ellipse cx="360" cy="370" rx="10" ry="22" transform="rotate(-40 360 370)"/>
+      </g>
+      <rect x="180" y="115" width="140" height="42" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+      <text x="250" y="145" font-family="'Impact', Arial, sans-serif" font-weight="900" font-size="28" fill="#009639" text-anchor="middle">BU<tspan fill="#e67e22">M</tspan><tspan fill="#009639">A</tspan></text>
+      <circle cx="250" cy="190" r="25" fill="#ffffff" stroke="#cca43b" stroke-width="3"/>
+      <polygon points="250,175 259,182 256,193 244,193 241,182" fill="#181818"/>
+      <text x="250" y="260" font-family="'Impact', Arial Black, sans-serif" font-style="italic" font-weight="900" font-size="60" fill="#cca43b" stroke="#ffffff" stroke-width="2" text-anchor="middle">ERRC</text>
+      <path d="M 80,285 L 420,285 L 400,325 L 100,325 Z" fill="#181818" stroke="#cca43b" stroke-width="4"/>
+      <text x="250" y="315" font-family="'Impact', Arial Black, sans-serif" font-style="italic" font-size="30" fill="#cca43b" letter-spacing="6" text-anchor="middle">LEAGUE</text>
+      <text x="250" y="358" font-family="'Arial Black', sans-serif" font-style="italic" font-weight="bold" font-size="16" fill="#ffffff" text-anchor="middle">#Dapatdiandalkan</text>
+      <g fill="#cca43b">
+        <polygon points="250,370 253,379 262,379 255,384 257,393 250,388 243,393 245,384 238,379 247,379"/>
+        <polygon points="215,373 218,382 227,382 220,387 222,396 215,391 208,396 210,387 203,382 212,382"/>
+        <polygon points="285,373 288,382 297,382 290,387 292,396 285,391 278,396 280,387 273,382 282,382"/>
+      </g>
+    </svg>
+  </div>
+  <div class="header-info">
+    <h1 id="ttl">ERRC League</h1>
+    <div class="sub"><i class="dot"></i><span id="role-status">Mode Tamu</span></div>
+    <div class="season-bar">
+      <label for="seasons-select">📅 Season:</label>
+      <select id="seasons-select"></select>
+    </div>
+  </div>
+  <div class="header-btns">
+    <button class="audio-btn" id="audio-toggle" title="Putar/Hentikan Backsound">🎵</button>
+    <button id="btn-login-toggle" class="hdr-btn">🔒 Admin</button>
+  </div>
+</header>
+
+<main id="main"></main>
+
+<tabs>
+  <button data-t="k" class="on"><span>🏆</span>Klasemen</button>
+  <button data-t="s"><span>⚽</span>Skor</button>
+  <button data-t="c"><span>📅</span>Jadwal</button>
+  <button data-t="p"><span>👤</span>Profil Peserta</button>
+  <button data-t="x"><span>📊</span>Statistik</button>
+  <button data-t="g"><span>🖼️</span>Galeri</button>
+  <button data-t="m"><span>⚙️</span>Pengaturan</button>
+</tabs>
+
+<div id="toast"></div>
+
+<!-- MODAL LOGIN ADMIN -->
+<div id="login-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <h3 style="margin:0 0 10px;color:var(--gold)">🔑 Login Administrator</h3>
+    <p style="font-size:12px;color:var(--mut);margin-bottom:14px">Masukkan password admin untuk mengaktifkan akses edit.</p>
+    <label>Password Admin:</label>
+    <input type="password" id="admin-pass-input" class="tx" placeholder="Password..." style="margin-bottom:12px">
+    <button class="btn" id="btn-do-login">Login Akses Admin</button>
+    <button class="btn sec" id="btn-close-login" style="margin-top:6px">Batal</button>
+  </div>
+</div>
+
+<script>
+var isAdmin = false;
+var adminPassword = "admin123";
+
+var Store = {
+  adminPass: "admin123",
+  activeSeasonId: "s1",
+  seasons: {
+    "s1": { id: "s1", name: "Season 1 (2025/26)", nameLeague: "ERRC League", teams: [], scores: {}, profiles: {} }
+  }
+};
+
+for(var i=1;i<=18;i++){
+  var tName = "Tim " + (i<10?"0":"") + i;
+  Store.seasons["s1"].teams.push(tName);
+  Store.seasons["s1"].profiles[i-1] = { fullName: tName, photo: "" };
+}
+
+var S = Store.seasons["s1"];
+var curSeasonId = "s1";
+var selTeamIdx = 0;
+var schedFilterTeam = "";
+var tab = "k", armed = false;
+
+try {
+  var savedStore = localStorage.getItem("ERRC_STORE_V11");
+  if(savedStore) {
+    Store = JSON.parse(savedStore);
+    if(!Store.seasons || Object.keys(Store.seasons).length === 0) {
+      Store = { adminPass: "admin123", activeSeasonId: "s1", seasons: { "s1": { id: "s1", name: "Season 1 (2025/26)", nameLeague: "ERRC League", teams: [], scores: {}, profiles: {} } } };
+      for(var i=1;i<=18;i++) {
+        var tName = "Tim " + (i<10?"0":"") + i;
+        Store.seasons["s1"].teams.push(tName);
+        Store.seasons["s1"].profiles[i-1] = { fullName: tName, photo: "" };
+      }
+    }
+    curSeasonId = Store.activeSeasonId || Object.keys(Store.seasons)[0];
+    S = Store.seasons[curSeasonId];
+    adminPassword = Store.adminPass || "admin123";
+  }
+} catch(e){}
+
+function saveLocal() {
+  try { localStorage.setItem("ERRC_STORE_V11", JSON.stringify(Store)); } catch(e){}
+}
+
+function syncTeamsFromProfiles(){
+  if(!S.profiles) S.profiles = {};
+  if(!S.teams) S.teams = [];
+  var maxLen = Math.max(S.teams.length, Object.keys(S.profiles).length);
+  var updatedTeams = [];
+  for(var i=0; i<maxLen; i++){
+    var prof = S.profiles[i];
+    var tName = S.teams[i] || ("Tim " + (i<9?"0":"") + (i+1));
+    if(prof && prof.fullName){
+      updatedTeams.push(prof.fullName);
+    } else {
+      updatedTeams.push(tName);
+      if(!S.profiles[i]) S.profiles[i] = { fullName: tName, photo: "" };
+    }
+  }
+  S.teams = updatedTeams;
+}
+
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function toast(t){var e=$("toast");e.textContent=t;e.className="s";setTimeout(function(){e.className=""},2200)}
+
+function fixtures(n){
+  if(n<2) return [];
+  var t=[],i,r,rounds=[];for(i=0;i<n;i++)t.push(i);
+  if(n%2){t.push(-1)}
+  var m=t.length;
+  for(r=0;r<m-1;r++){
+    var rd=[];
+    for(i=0;i<m/2;i++){
+      var a=t[i],b=t[m-1-i];
+      if(i==0&&r%2==1){var x=a;a=b;b=x}
+      if(a>=0&&b>=0)rd.push([a,b]);
+    }
+    rounds.push(rd);
+    t=[t[0],t[m-1]].concat(t.slice(1,m-1));
+  }
+  var sec=rounds.map(function(rd){return rd.map(function(p){return[p[1],p[0]]})});
+  return rounds.concat(sec);
+}
+function key(h,a){return h+"-"+a}
+
+function standingsForSeason(sObj){
+  syncTeamsFromProfiles();
+  var n=sObj.teams.length,T=[],i;
+  for(i=0;i<n;i++)T.push({i:i,n:sObj.teams[i],p:0,w:0,d:0,l:0,gf:0,ga:0,cs:0});
+  for(var k in sObj.scores){
+    var q=k.split("-"),h=+q[0],a=+q[1],s=sObj.scores[k];
+    if(!T[h]||!T[a]||!s)continue;
+    var x=T[h],y=T[a];x.p++;y.p++;x.gf+=s[0];x.ga+=s[1];y.gf+=s[1];y.ga+=s[0];
+    if(s[1]===0) x.cs++;
+    if(s[0]===0) y.cs++;
+    if(s[0]>s[1]){x.w++;y.l++}else if(s[0]<s[1]){y.w++;x.l++}else{x.d++;y.d++}
+  }
+  T.forEach(function(t){t.sg=t.gf-t.ga;t.pt=t.w*3+t.d;t.f=[];t.matchHistory=[]});
+  
+  fixtures(n).forEach(function(rd, rIdx){
+    rd.forEach(function(p){
+      var s = sObj.scores[key(p[0], p[1])];
+      if(!s) return;
+      var hIdx = p[0], aIdx = p[1];
+      var hTeam = T[hIdx], aTeam = T[aIdx];
+      if(!hTeam || !aTeam) return;
+
+      var resH = s[0]>s[1]?"M":s[0]<s[1]?"K":"S";
+      var resA = s[1]>s[0]?"M":s[1]<s[0]?"K":"S";
+
+      hTeam.f.push(resH);
+      hTeam.matchHistory.push({ md: rIdx+1, opp: aTeam.n, score: s[0]+"-"+s[1], res: resH });
+
+      aTeam.f.push(resA);
+      aTeam.matchHistory.push({ md: rIdx+1, opp: hTeam.n, score: s[1]+"-"+s[0], res: resA });
+    });
+  });
+
+  T.sort(function(a,b){return b.pt-a.pt||b.sg-a.sg||b.gf-a.gf||a.i-b.i});
+  return T;
+}
+
+function standings(){ return standingsForSeason(S); }
+function totalMatches(){return fixtures(S.teams.length).reduce(function(s,r){return s+r.length},0)}
+function played(){var c=0;for(var k in S.scores)if(S.scores[k])c++;return c}
+
+function badge(i,sz){
+  syncTeamsFromProfiles();
+  var prof = S.profiles && S.profiles[i];
+  if(prof && prof.photo) return '<img class="bd" style="width:'+sz+'px;height:'+sz+'px;object-fit:contain;background:#000" src="'+prof.photo+'" alt="">';
+  var n=S.teams[i]||"?",w=n.trim().split(/\s+/),ini=(w.length>1?w[0][0]+w[1][0]:n.slice(0,2)).toUpperCase(),h=0;
+  for(var k=0;k<n.length;k++)h=(h*31+n.charCodeAt(k))%360;
+  return '<span class="bd" style="width:'+sz+'px;height:'+sz+'px;font-size:'+Math.round(sz*0.4)+'px;background:hsl('+h+',60%,35%)">'+esc(ini)+'</span>';
+}
+
+function formHtml(f){return f.length?'<span class="fm">'+f.slice(-5).map(function(r){return '<i class="fd '+r+'">'+r+'</i>'}).join("")+'</span>':"—"}
+
+function leadCard(T,f,label,pl){
+  if(!pl)return '<div class="c"><b>—</b><span>'+label+'</span></div>';
+  var m=Math.max.apply(null,T.map(function(t){return t[f]})),w=T.filter(function(t){return t[f]==m});
+  return '<div class="c"><b>'+badge(w[0].i,24)+esc(w[0].n)+(w.length>1?' +'+(w.length-1):'')+'</b><span>'+label+' · '+m+' gol</span></div>';
+}
+
+function calculateAutoPOTM(){
+  if(S.teams.length < 2) return null;
+  var F = fixtures(S.teams.length);
+  var bestMatch = null;
+  var bestScoreVal = -9999;
+
+  F.forEach(function(rd, rIdx){
+    var mdNum = rIdx + 1;
+    rd.forEach(function(p){
+      var k = key(p[0], p[1]);
+      var sc = S.scores[k];
+      if(sc){
+        var hGoals = sc[0], aGoals = sc[1];
+        var valH = (hGoals * 3) + (hGoals - aGoals) - (aGoals * 0.5);
+        if(!bestMatch || valH > bestScoreVal){
+          bestScoreVal = valH;
+          bestMatch = { md: mdNum, teamIdx: p[0], oppIdx: p[1], hScore: hGoals, aScore: aGoals };
+        }
+        var valA = (aGoals * 3) + (aGoals - hGoals) - (hGoals * 0.5);
+        if(!bestMatch || valA > bestScoreVal){
+          bestScoreVal = valA;
+          bestMatch = { md: mdNum, teamIdx: p[1], oppIdx: p[0], hScore: hGoals, aScore: aGoals };
+        }
+      }
+    });
+  });
+
+  return bestMatch;
+}
+
+function viewPOTMCard(){
+  var potm = calculateAutoPOTM();
+  if(!S.profiles) S.profiles = {};
+
+  var avatarUrl = "";
+  var teamName = "";
+  var detailText = "Belum Ada Laga Selesai";
+
+  if(potm){
+    syncTeamsFromProfiles();
+    teamName = S.teams[potm.teamIdx] || "Tim";
+    var oppName = S.teams[potm.oppIdx] || "Tim";
+    detailText = 'Match Day '+potm.md+' · Skor: '+potm.hScore+' - '+potm.aScore+' (vs '+esc(oppName)+')';
+    
+    var prof = S.profiles[potm.teamIdx];
+    if(prof){
+      avatarUrl = prof.photo || "";
+    }
+  }
+
+  var h = '<div class="potm-card">'+
+    '<div class="potm-header">'+
+      '<b>⭐ PLAYER OF THE MATCH (OTOMATIS)</b>'+
+      '<span style="font-size:11px;color:#a7f3d0;font-weight:700">'+(potm ? 'Match Day '+potm.md : 'Sistem')+'</span>'+
+    '</div>'+
+    '<div class="potm-body">'+
+      '<div class="potm-img-wrap">'+
+        (avatarUrl ? '<img src="'+avatarUrl+'" alt="POTM">' : 
+        '<div style="color:var(--mut);font-size:12px;padding:20px;text-align:center"><span>👤</span><br>Foto Profil Belum Diunggah</div>')+
+      '</div>';
+
+  if(potm){
+    h += '<h3 style="margin:4px 0 2px;color:var(--gold);font-size:18px">'+badge(potm.teamIdx, 28)+esc(teamName)+'</h3>'+
+         '<span style="font-size:11px;color:var(--mut);margin-top:2px">'+detailText+'</span>';
+  } else {
+    h += '<h3 style="margin:4px 0 0;color:var(--gold);font-size:16px">Menunggu Pertandingan Selesai</h3>';
+  }
+
+  h += '</div></div>';
+  return h;
+}
+
+function viewK(){
+  var T=standings(),tot=totalMatches(),pl=played(),gl=T.reduce(function(s,t){return s+t.gf},0);
+  var isArsip = curSeasonId !== Store.activeSeasonId;
+
+  var h=(isArsip?'<div style="background:rgba(255,215,0,0.15);color:var(--gold);padding:8px 12px;border-radius:10px;margin-bottom:12px;font-size:12px;font-weight:600;border:1px solid rgba(255,215,0,0.3)">📜 Menampilkan data historis/arsip dari '+esc(S.name)+'</div>':'')+
+  '<div class="cards"><div class="c"><b>'+pl+' / '+tot+'</b><span>Pertandingan selesai</span><div class="bar"><i style="width:'+(tot?pl/tot*100:0)+'%"></i></div></div>'+
+  '<div class="c"><b>'+(pl?esc(T[0].n):"—")+'</b><span>Pemuncak Klasemen</span></div>'+
+  '<div class="c"><b>'+gl+'</b><span>Total Gol Tercetak</span></div>'+
+  '<div class="c"><b>'+(pl?(gl/pl).toFixed(2):"0.00")+'</b><span>Rata-rata Gol / Match Day</span></div>'+leadCard(T,"gf","🥅 Paling Banyak Cetak Gol",pl)+leadCard(T,"ga","😬 Paling Banyak Kebobolan",pl)+'</div>';
+  
+  h += viewPOTMCard();
+  h += podium(T,pl)+'<div class="wrap"><table><tr><th>#</th><th style="text-align:left">Tim</th><th>Main</th><th>M</th><th>S</th><th>K</th><th>GM</th><th>GK</th><th>SG</th><th>Poin</th><th>Form</th></tr>';
+  T.forEach(function(t,i){
+    var c=pl&&i==0?"g":(pl&&i>=T.length-3&&T.length>6?"r":"");
+    h+='<tr class="'+c+'"><td><span class="ps'+(i<3?" t"+(i+1):"")+'">'+(i+1)+'</span></td><td class="t" style="display:flex;align-items:center;gap:6px">'+badge(t.i,22)+esc(t.n)+'</td><td>'+t.p+'</td><td>'+t.w+'</td><td>'+t.d+'</td><td>'+t.l+'</td><td>'+t.gf+'</td><td>'+t.ga+'</td><td>'+(t.sg>0?"+":"")+t.sg+'</td><td class="p">'+t.pt+'</td><td>'+formHtml(t.f)+'</td></tr>';
+  });
+  h+='</table></div><div class="note">M = Menang, S = Seri, K = Kalah, GM/GK = Gol Masuk/Kemasukan, SG = Selisih Gol.</div>'+feed();
+  return h;
+}
+
+function viewProfiles(){
+  if(!S.profiles) S.profiles = {};
+  var h = '<input type="file" id="profile_file_input" accept="image/*" style="display:none">'+
+    '<div class="stat-box">'+
+      '<h3 style="margin:0 0 6px;color:var(--gold);font-size:16px">👤 Profil Peserta ('+esc(S.name)+')</h3>'+
+      '<span style="font-size:12px;color:var(--mut)">'+(isAdmin?'Admin dapat mengisi Nama Lengkap Tim serta mengunggah Foto Profil peserta. Foto otomatis disesuaikan agar utuh dan tidak terpotong. Tambah atau kurangi peserta melalui tab <b>Pengaturan</b>.':'Daftar profil resmi peserta.')+'</span>'+
+    '</div>';
+
+  S.teams.forEach(function(teamName, idx){
+    if(!S.profiles[idx]) S.profiles[idx] = { fullName: teamName, photo: "" };
+    var prof = S.profiles[idx];
+    h += '<div class="profile-card">'+
+      '<div class="profile-avatar" '+(isAdmin?'data-profile-idx="'+idx+'" title="Ketuk untuk ganti foto" style="cursor:pointer"':'')+'>'+
+        (prof.photo ? '<img src="'+prof.photo+'" style="width:100%;height:100%;object-fit:contain;background:#000" alt="">' : badge(idx, 60))+
+      '</div>'+
+      '<div class="profile-info">'+
+        '<label style="font-size:10px;color:var(--mut);margin:0">Nama Lengkap Tim / Peserta</label>'+
+        (isAdmin ? 
+          '<input class="tx pr-input" data-idx="'+idx+'" placeholder="Nama Lengkap Tim..." value="'+esc(prof.fullName || teamName)+'" style="font-size:14px;font-weight:bold;margin-top:2px">' :
+          '<div style="font-size:16px;font-weight:bold;color:var(--gold);margin-top:2px">'+esc(prof.fullName || teamName)+'</div>'
+        )+
+      '</div>'+
+    '</div>';
+  });
+
+  if(isAdmin){
+    h += '<button class="btn" id="btn_save_profiles">💾 Simpan & Sinkronkan Profil</button>';
+  }
+  return h;
+}
+
+function viewScoresAdminOptions(){
+  syncTeamsFromProfiles();
+  if(S.teams.length < 2) {
+    return '<div class="stat-box"><h3 style="color:var(--gold)">⚽ Update Hasil Pertandingan</h3><p style="font-size:12px;color:var(--mut)">Jumlah peserta minimal harus 2 tim untuk memulai pertandingan. Tambah peserta di menu <b>Pengaturan</b>.</p></div>';
+  }
+
+  var teamOpts = S.teams.map(function(t, i){ return '<option value="'+i+'">'+esc(t)+'</option>'; }).join("");
+  var isArsip = curSeasonId !== Store.activeSeasonId;
+
+  var unplayedMatches = [];
+  var F = fixtures(S.teams.length);
+  F.forEach(function(rd, rIdx){
+    rd.forEach(function(p){
+      var k = key(p[0], p[1]);
+      if(!S.scores[k]){
+        unplayedMatches.push({ k: k, md: rIdx + 1, h: p[0], a: p[1] });
+      }
+    });
+  });
+
+  var matchOptionsHtml = unplayedMatches.map(function(m){
+    return '<option value="'+m.k+'">Match Day '+m.md+': '+esc(S.teams[m.h])+' VS '+esc(S.teams[m.a])+'</option>';
+  }).join("");
+
+  var h = '<div class="stat-box">'+
+    '<h3 style="margin:0 0 10px;color:var(--gold);font-size:16px">⚽ Update Hasil Pertandingan ('+esc(S.name)+')</h3>';
+
+  if(!isAdmin){
+    h += '<div style="background:rgba(244,33,46,0.15);color:var(--red);padding:10px;border-radius:10px;font-size:12px;border:1px solid var(--red)">🔒 Mode View (Tamu). Hanya Admin yang dapat mengubah skor.</div>';
+  } else if(isArsip) {
+    h += '<div style="color:var(--red);font-size:12px;margin-bottom:10px">⚠️ Season arsip bersifat Read-Only.</div>';
+  } else {
+    h += '<div style="background:#111827;padding:12px;border-radius:10px;border:1px solid var(--line);margin-bottom:14px">'+
+      '<label style="color:var(--gold);font-weight:bold;margin:0 0 6px">⚡ Opsi 1: Pilih Laga Belum Selesai</label>'+
+      '<select class="tx" id="unplayed_match_sel" style="margin-bottom:10px"><option value="">-- Pilih Pertandingan --</option>'+matchOptionsHtml+'</select>'+
+    '</div>'+
+    '<div style="text-align:center;font-size:12px;color:var(--mut);margin-bottom:10px">ATAU PILIH MANUAL:</div>'+
+    '<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center;margin-bottom:10px">'+
+      '<div><label>Tim Kandang</label><select class="tx" id="match_team_h">'+teamOpts+'</select></div>'+
+      '<div style="text-align:center;padding-top:16px;font-weight:bold;color:var(--gold)">VS</div>'+
+      '<div><label>Tim Tandang</label><select class="tx" id="match_team_a">'+teamOpts+'</select></div>'+
+    '</div>'+
+    '<div style="background:#111827;padding:12px;border-radius:10px;border:1px solid var(--line);text-align:center;margin-bottom:12px">'+
+      '<label style="margin-bottom:6px;color:var(--gold);font-weight:bold">KETIK SKOR AKHIR</label>'+
+      '<div style="display:flex;justify-content:center;align-items:center;gap:10px">'+
+        '<input class="sc" type="number" id="match_score_h" min="0" max="99" value="0">'+
+        '<b style="font-size:24px;color:var(--gold)">–</b>'+
+        '<input class="sc" type="number" id="match_score_a" min="0" max="99" value="0">'+
+      '</div>'+
+    '</div>'+
+    '<button class="btn" id="btn_save_match_quick">💾 Simpan Hasil Skor</button>';
+  }
+
+  h += '</div><h3 class="sh">📋 Hasil Laga Tersimpan</h3>';
+  var recordedKeys = Object.keys(S.scores);
+  if(recordedKeys.length === 0){
+    h += '<div class="c"><span>Belum ada hasil pertandingan.</span></div>';
+  } else {
+    recordedKeys.forEach(function(k){
+      var q = k.split("-"), hIdx = +q[0], aIdx = +q[1], sc = S.scores[k];
+      if(S.teams[hIdx] && S.teams[aIdx]){
+        h += '<div class="c" style="margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;font-size:13px">'+
+          '<div style="flex:1;font-weight:600;display:flex;align-items:center;gap:6px">'+badge(hIdx,24)+esc(S.teams[hIdx])+'</div>'+
+          '<div style="padding:0 10px;font-weight:900;color:var(--gold);font-size:15px">'+sc[0]+' - '+sc[1]+'</div>'+
+          '<div style="flex:1;text-align:right;font-weight:600;display:flex;align-items:center;justify-content:flex-end;gap:6px">'+esc(S.teams[aIdx])+badge(aIdx,24)+'</div>'+
+          (isAdmin && !isArsip ? '<button class="btn sec" style="width:auto;height:30px;padding:0 10px;margin:0 0 0 10px;font-size:11px" data-del-match="'+k+'">Hapus</button>' : '')+
+        '</div>';
+      }
+    });
+  }
+
+  return h;
+}
+
+function viewSchedule(){
+  syncTeamsFromProfiles();
+  if(S.teams.length < 2) return '<div class="stat-box"><h3 style="color:var(--gold)">📅 Jadwal Pertandingan</h3><p style="font-size:12px;color:var(--mut)">Minimal butuh 2 tim untuk membuat jadwal.</p></div>';
+
+  var F = fixtures(S.teams.length);
+  var nextMatch = null;
+  var nextMatchRound = 0;
+
+  F.forEach(function(rd, rIdx){
+    if(nextMatch) return;
+    rd.forEach(function(p){
+      var k = key(p[0], p[1]);
+      if(!nextMatch && !S.scores[k]){
+        nextMatch = p;
+        nextMatchRound = rIdx + 1;
+      }
+    });
+  });
+
+  var h = '<div class="sched-banner">'+
+    '<div style="font-size:12px;color:var(--gold);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">⚡ PENGINGAT LAGA TERDEKAT</div>';
+  if(nextMatch){
+    h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">'+
+      '<div style="flex:1;text-align:right;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:flex-end;gap:8px">'+esc(S.teams[nextMatch[0]])+badge(nextMatch[0],32)+'</div>'+
+      '<div style="padding:0 12px;font-weight:900;color:var(--gold);font-size:15px;text-align:center">VS<br><span style="font-size:10px;color:#a7f3d0;font-weight:600">Match Day '+nextMatchRound+'</span></div>'+
+      '<div style="flex:1;font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px">'+badge(nextMatch[1],32)+esc(S.teams[nextMatch[1]])+'</div>'+
+    '</div>';
+  } else {
+    h += '<div style="font-size:14px;color:#fff;font-weight:600;margin-top:4px">Semua pertandingan selesai! 🎉</div>';
+  }
+  h += '</div>';
+
+  var teamOpts = '<option value="">Semua Tim</option>';
+  S.teams.forEach(function(t, i){
+    teamOpts += '<option value="'+i+'"'+(schedFilterTeam === String(i)?' selected':'')+'>'+esc(t)+'</option>';
+  });
+
+  h += '<div class="stat-box">'+
+    '<h3 style="margin:0 0 10px;color:var(--gold);font-size:15px">📅 Filter Jadwal</h3>'+
+    '<label>Pilih Tim:</label>'+
+    '<select class="tx" id="sched_team_filter">'+teamOpts+'</select>'+
+  '</div>';
+
+  F.forEach(function(rd, rIdx){
+    var matchesInRound = rd.filter(function(p){
+      if(schedFilterTeam === "") return true;
+      return p[0] == +schedFilterTeam || p[1] == +schedFilterTeam;
+    });
+
+    if(matchesInRound.length === 0) return;
+
+    h += '<h3 class="sh">Match Day '+ (rIdx + 1) +'</h3>';
+    matchesInRound.forEach(function(p){
+      var k = key(p[0], p[1]), s = S.scores[k];
+      var statusText = s ? '✅ Selesai ('+s[0]+' - '+s[1]+')' : '⏳ Belum Main';
+      var statusColor = s ? '#34d399' : '#8899a6';
+      
+      h += '<div class="c" style="margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;font-size:13px">'+
+        '<div style="flex:1;font-weight:600;display:flex;align-items:center;gap:6px">'+badge(p[0],24)+esc(S.teams[p[0]])+'</div>'+
+        '<div style="text-align:center;padding:0 8px"><span style="font-size:11px;color:var(--gold);font-weight:bold">'+(s ? s[0]+' - '+s[1] : 'VS')+'</span></div>'+
+        '<div style="flex:1;text-align:right;font-weight:600;display:flex;align-items:center;justify-content:flex-end;gap:6px">'+esc(S.teams[p[1]])+badge(p[1],24)+'</div>'+
+        '<div style="margin-left:12px;font-size:11px;font-weight:700;color:'+statusColor+';min-width:90px;text-align:right">'+statusText+'</div>'+
+      '</div>';
+    });
+  });
+
+  return h;
+}
+
+function viewX(){
+  syncTeamsFromProfiles();
+  var T = standings();
+  if(T.length === 0) return '<div class="stat-box"><h3 style="color:var(--gold)">📊 Statistik Tim</h3><p style="font-size:12px;color:var(--mut)">Belum ada tim terdaftar.</p></div>';
+
+  if(selTeamIdx >= T.length) selTeamIdx = 0;
+  var teamList = S.teams.map(function(t, i){
+    return '<option value="'+i+'"'+(i==selTeamIdx?' selected':'')+'>'+esc(t)+'</option>';
+  }).join("");
+
+  var myStat = T.find(function(t){return t.i == selTeamIdx}) || {p:0,w:0,d:0,l:0,gf:0,ga:0,sg:0,pt:0,cs:0,f:[],matchHistory:[]};
+  var rankIdx = T.findIndex(function(t){return t.i == selTeamIdx}) + 1;
+
+  var winRate = myStat.p > 0 ? ((myStat.w / myStat.p) * 100).toFixed(1) + '%' : '0%';
+  var avgGf = myStat.p > 0 ? (myStat.gf / myStat.p).toFixed(2) : '0.00';
+  var avgGa = myStat.p > 0 ? (myStat.ga / myStat.p).toFixed(2) : '0.00';
+
+  var last5Matches = myStat.matchHistory ? myStat.matchHistory.slice(-5).reverse() : [];
+  var historyHtml = "";
+  if(last5Matches.length === 0){
+    historyHtml = '<div style="color:var(--mut);font-size:12px;padding:6px 0">Belum ada pertandingan yang dimainkan.</div>';
+  } else {
+    last5Matches.forEach(function(m){
+      var bgCol = m.res === 'M' ? 'rgba(0,186,124,0.15)' : m.res === 'K' ? 'rgba(244,33,46,0.15)' : 'rgba(136,153,166,0.15)';
+      var textCol = m.res === 'M' ? '#00ba7c' : m.res === 'K' ? '#f4212e' : '#8899a6';
+      var resLabel = m.res === 'M' ? 'MENANG' : m.res === 'K' ? 'KALAH' : 'SERI';
+
+      historyHtml += '<div style="display:flex;align-items:center;justify-content:space-between;background:'+bgCol+';border:1px solid var(--line);padding:8px 12px;border-radius:8px;margin-bottom:6px;font-size:12px">'+
+        '<div><b style="color:var(--gold)">Match Day '+m.md+'</b> vs <b>'+esc(m.opp)+'</b></div>'+
+        '<div style="display:flex;align-items:center;gap:10px">'+
+          '<span style="font-weight:bold">'+m.score+'</span>'+
+          '<span style="padding:2px 8px;border-radius:6px;background:'+textCol+';color:#fff;font-size:10px;font-weight:bold">'+resLabel+'</span>'+
+        '</div>'+
+      '</div>';
+    });
+  }
+
+  var h = '<div class="stat-box">'+
+    '<h3 style="margin:0 0 10px;color:var(--gold);font-size:16px">📊 Analisis Performa Tim</h3>'+
+    '<label>Pilih Tim:</label>'+
+    '<select class="tx" id="stat_team_sel" style="margin-bottom:12px">'+teamList+'</select>'+
+    '<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;background:#111827;padding:14px;border-radius:12px;border:1px solid var(--line)">'+
+      badge(selTeamIdx, 52)+
+      '<div>'+
+        '<h2 style="margin:0;font-size:20px;color:#fff">'+esc(S.teams[selTeamIdx] || "Tim")+'</h2>'+
+        '<span style="font-size:12px;color:var(--gold);font-weight:bold">Posisi Klasemen: Peringkat #'+rankIdx+'</span>'+
+      '</div>'+
+    '</div>'+
+    '<div class="stat-grid">'+
+      '<div class="stat-item"><span>Total Poin</span><b>'+myStat.pt+' Pts</b></div>'+
+      '<div class="stat-item"><span>Main</span><b>'+myStat.p+' Laga</b></div>'+
+      '<div class="stat-item"><span>M / S / K</span><b>'+myStat.w+'M / '+myStat.d+'S / '+myStat.l+'K</b></div>'+
+      '<div class="stat-item"><span>Win Rate</span><b>'+winRate+'</b></div>'+
+      '<div class="stat-item"><span>Gol Memasukkan (GM)</span><b>'+myStat.gf+' Gol</b></div>'+
+      '<div class="stat-item"><span>Gol Kebobolan (GK)</span><b>'+myStat.ga+' Gol</b></div>'+
+      '<div class="stat-item"><span>Selisih Gol (SG)</span><b>'+(myStat.sg>0?'+':'')+myStat.sg+'</b></div>'+
+      '<div class="stat-item"><span>Clean Sheet</span><b>'+myStat.cs+' Laga</b></div>'+
+    '</div>'+
+    '<div style="margin-top:14px;background:#111827;padding:14px;border-radius:10px;border:1px solid var(--line)">'+
+      '<h4 style="margin:0 0 10px;color:var(--gold);font-size:13px;text-transform:uppercase">📋 Hasil 5 Pertandingan Terakhir</h4>'+
+      historyHtml+
+    '</div>'+
+  '</div>';
+
+  return h;
+}
+
+function viewGallery(){
+  syncTeamsFromProfiles();
+  var T = standings();
+  var pl = played();
+  if(!S.profiles) S.profiles = {};
+
+  var medals = [
+    { pos: "p1", title: "🥇 JUARA 1 (CHAMPION)", team: pl && T.length>0 ? T[0] : null },
+    { pos: "p2", title: "🥈 JUARA 2 (RUNNER-UP)", team: pl && T.length > 1 ? T[1] : null },
+    { pos: "p3", title: "🥉 JUARA 3 (THIRD PLACE)", team: pl && T.length > 2 ? T[2] : null }
+  ];
+
+  var h = '<div class="stat-box">'+
+    '<h3 style="margin:0 0 6px;color:var(--gold);font-size:16px">📸 Galeri Pemenang Season (Otomatis)</h3>'+
+    '<span style="font-size:12px;color:var(--mut)">Foto pemenang ditarik otomatis dari foto profil di menu Profil Peserta (tampil utuh tanpa terpotong).</span>'+
+  '</div>';
+
+  medals.forEach(function(m){
+    var teamName = m.team ? esc(m.team.n) : "Belum ditentukan";
+    var photoUrl = "";
+    var displayTitle = teamName;
+
+    if(m.team){
+      var prof = S.profiles[m.team.i];
+      if(prof){
+        photoUrl = prof.photo || "";
+        displayTitle = prof.fullName ? esc(prof.fullName) : teamName;
+      }
+    }
+
+    h += '<div class="gal-card '+m.pos+'">'+
+      '<div class="gal-header">'+
+        '<b>'+m.title+'</b>'+
+        '<span style="font-size:13px;font-weight:700;color:#fff">'+displayTitle+'</span>'+
+      '</div>'+
+      '<div class="gal-img-wrap">'+
+        (photoUrl ? '<img src="'+photoUrl+'" alt="Pemenang">' : 
+        '<div style="text-align:center;color:var(--mut);padding:20px"><span>📷</span><br>Foto profil peserta belum diunggah</div>')+
+      '</div>'+
+    '</div>';
+  });
+
+  return h;
+}
+
+function teamRows(){
+  syncTeamsFromProfiles();
+  return S.teams.map(function(t,i){
+    return '<div class="tr"><span class="bdw" title="Logo dari Profil">'+badge(i,40)+'</span><input class="tx" value="'+esc(t)+'" readonly style="background:#111827;color:var(--gold);cursor:not-allowed"><button class="x" data-del-team="'+i+'" title="Hapus peserta">✕</button></div>';
+  }).join("");
+}
+
+function syncNames(){
+  syncTeamsFromProfiles();
+  if(!isAdmin) return;
+  var l=$("ln");if(l)S.nameLeague=l.value;
+  var sn=$("sn_input");if(sn)S.name=sn.value;
+  saveLocal();
+}
+
+function feed(){
+  syncTeamsFromProfiles();
+  var L=Object.keys(S.scores).map(function(k){return {k:k, s:S.scores[k]}}).slice(-5).reverse();
+  var h='<h3 class="sh">🕒 Aktivitas Terbaru ('+esc(S.name)+')</h3><div class="c">';
+  if(!L.length)return h+'<span>Belum ada aktivitas.</span></div>';
+  L.forEach(function(item){
+    var q=item.k.split("-"),hIdx=+q[0],aIdx=+q[1],sc=item.s;
+    if(S.teams[hIdx] && S.teams[aIdx]){
+      h+='<div class="sr"><span class="sn" style="width:auto;flex:1;white-space:normal">✅ '+esc(S.teams[hIdx])+" "+sc[0]+"–"+sc[1]+" "+esc(S.teams[aIdx])+'</span></div>';
+    }
+  });
+  return h+'</div>';
+}
+
+function podium(T,pl){
+  if(!pl||T.length<3)return"";var md=["🥇","🥈","🥉"];
+  return '<div class="pod">'+[1,0,2].map(function(i){var t=T[i];return '<div class="pd p'+(i+1)+'"><div class="md">'+md[i]+'</div>'+badge(t.i,i==0?50:40)+'<div class="nm">'+esc(t.n)+'</div><b>'+t.pt+'</b><small>poin · '+t.p+' laga</small></div>'}).join("")+'</div>';
+}
+
+function viewM(){
+  var isArsip = curSeasonId !== Store.activeSeasonId;
+  var seasonsList = Object.keys(Store.seasons).map(function(id){
+    var s = Store.seasons[id];
+    return '<option value="'+id+'"'+(id===curSeasonId?' selected':'')+'>'+esc(s.name)+(id===Store.activeSeasonId?' (Aktif)':' (Arsip)')+'</option>';
+  }).join("");
+
+  var h = '<div style="background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:14px;backdrop-filter:blur(4px)">'+
+    '<h3 style="margin:0 0 10px;font-size:15px;color:var(--gold)">📅 Manajemen Season</h3>'+
+    '<label>Pilih Season</label><select id="m_season_sel" class="tx" style="margin-bottom:8px">'+seasonsList+'</select>'+
+    (isAdmin ? (isArsip ? '<button class="btn sec2" id="set_active_sn">⚡ JADIKAN SEASON AKTIF</button>' : '<div class="note">Season AKTIF.</div>') : '')+
+    (isAdmin ? '<button class="btn sec2" id="add_sn_btn">+ TAMBAH SEASON</button>' : '')+
+    (isAdmin && Object.keys(Store.seasons).length > 1 ? '<button class="btn sec" id="del_sn_btn" style="margin-top:8px">🗑️ Hapus Season Ini</button>' : '')+
+  '</div>';
+
+  if(!isAdmin){
+    h += '<div class="stat-box"><span style="color:var(--red);font-size:12px">🔒 Login Admin untuk mengedit tim atau season.</span></div>';
+  } else {
+    h += '<div class="stat-box" style="margin-bottom:14px">'+
+      '<h3 style="margin:0 0 8px;font-size:14px;color:var(--gold)">🔑 Password Admin</h3>'+
+      '<label>Ganti Password:</label>'+
+      '<input type="password" id="new_admin_pass" class="tx" placeholder="Password baru..." style="margin-bottom:8px">'+
+      '<button class="btn sec2" id="btn_save_pass">Simpan Password</button>'+
+    '</div>'+
+    '<label>Nama Liga Utama</label><input class="tx" id="ln" value="'+esc(S.nameLeague || "ERRC League")+'">'+
+    '<label>Nama Season</label><input class="tx" id="sn_input" value="'+esc(S.name)+'">'+
+    '<label style="margin-top:14px">Daftar Peserta / Tim Liga</label>'+teamRows()+
+    '<button class="btn sec2" id="btn_add_team" style="margin-top:8px">+ Tambah Peserta</button>'+
+    '<button class="btn" id="sv" style="margin-top:10px">Simpan Pengaturan Liga</button>'+
+    '<button class="btn sec" id="rs">Hapus semua skor</button>';
+  }
+
+  return h;
+}
+
+function renderSeasonSelect(){
+  var sel = $("seasons-select");
+  if(!sel) return;
+  sel.innerHTML = Object.keys(Store.seasons).map(function(id){
+    var s = Store.seasons[id];
+    return '<option value="'+id+'"'+(id===curSeasonId?' selected':'')+'>'+esc(s.name)+(id===Store.activeSeasonId?' 🟢':' 📜')+'</option>';
+  }).join("");
+}
+
+function updateRoleUI(){
+  var btn = $("btn-login-toggle");
+  var st = $("role-status");
+  if(isAdmin){
+    btn.textContent = "🔓 Logout";
+    btn.className = "hdr-btn admin-on";
+    st.textContent = "Mode Admin";
+    st.style.color = "#ffd700";
+  } else {
+    btn.textContent = "🔒 Admin";
+    btn.className = "hdr-btn";
+    st.textContent = "Mode Tamu";
+    st.style.color = "#a7f3d0";
+  }
+}
+
+function render(){
+  syncTeamsFromProfiles();
+  var titleText = (S.nameLeague || "ERRC League") + " — " + S.name;
+  $("ttl").textContent = S.nameLeague || "ERRC League";
+  document.title = titleText;
+  renderSeasonSelect();
+  updateRoleUI();
+
+  document.querySelectorAll("tabs button").forEach(function(x){x.classList.toggle("on",x.dataset.t==tab)});
+  var a=document.activeElement;
+  if(tab=="s"&&a&&a.classList&&a.classList.contains("sc"))return;
+  if(tab=="p"&&a&&a.classList&&a.classList.contains("pr-input"))return;
+  if(tab=="m"&&a&&(a.id=="ln"||a.id=="sn_input"))return;
+  
+  var contentHTML = "";
+  if(tab=="k") contentHTML = viewK();
+  else if(tab=="s") contentHTML = viewScoresAdminOptions();
+  else if(tab=="c") contentHTML = viewSchedule();
+  else if(tab=="p") contentHTML = viewProfiles();
+  else if(tab=="x") contentHTML = viewX();
+  else if(tab=="g") contentHTML = viewGallery();
+  else if(tab=="m") contentHTML = viewM();
+
+  $("main").innerHTML = contentHTML;
+  bind();
+}
+
+var currentUploadProfileIdx = null;
+
+function bind(){
+  $("seasons-select").onchange = function(){
+    curSeasonId = this.value;
+    S = Store.seasons[curSeasonId];
+    render();
+  };
+
+  if(tab=="p" && isAdmin){
+    document.querySelectorAll("[data-profile-idx]").forEach(function(el){
+      el.onclick = function(){
+        currentUploadProfileIdx = +this.dataset.profileIdx;
+        $("profile_file_input").click();
+      };
+    });
+
+    if($("profile_file_input")){
+      $("profile_file_input").onchange = function(e){
+        var file = e.target.files[0];
+        if(!file) return;
+        var reader = new FileReader();
+        reader.onload = function(evt){
+          if(!S.profiles) S.profiles = {};
+          if(!S.profiles[currentUploadProfileIdx]) S.profiles[currentUploadProfileIdx] = {};
+          S.profiles[currentUploadProfileIdx].photo = evt.target.result;
+          saveLocal();
+          toast("Foto profil berhasil diunggah!");
+          render();
+        };
+        reader.readAsDataURL(file);
+        this.value = "";
+      };
+    }
+
+    if($("btn_save_profiles")){
+      $("btn_save_profiles").onclick = function(){
+        if(!S.profiles) S.profiles = {};
+        document.querySelectorAll(".pr-input").forEach(function(inp){
+          var idx = +inp.dataset.idx;
+          if(!S.profiles[idx]) S.profiles[idx] = {};
+          var val = inp.value.trim();
+          S.profiles[idx].fullName = val;
+          if(S.teams[idx] !== undefined){
+            S.teams[idx] = val || ("Tim " + (idx+1));
+          }
+        });
+        saveLocal();
+        toast("Profil peserta disimpan & disinkronkan ke tim!");
+        render();
+      };
+    }
+  }
+
+  if(tab=="s"){
+    if($("unplayed_match_sel")){
+      $("unplayed_match_sel").onchange = function(){
+        if(!this.value) return;
+        var q = this.value.split("-");
+        $("match_team_h").value = q[0];
+        $("match_team_a").value = q[1];
+      };
+    }
+
+    if($("btn_save_match_quick")){
+      $("btn_save_match_quick").onclick = function(){
+        if(!isAdmin){ toast("Akses ditolak"); return; }
+        if(curSeasonId !== Store.activeSeasonId) { toast("Season arsip read-only"); return; }
+        var hIdx = +$("match_team_h").value;
+        var aIdx = +$("match_team_a").value;
+
+        if(hIdx === aIdx){ toast("Tim tidak boleh sama!"); return; }
+        var scH = parseInt($("match_score_h").value, 10) || 0;
+        var scA = parseInt($("match_score_a").value, 10) || 0;
+        var k = key(hIdx, aIdx);
+        S.scores[k] = [scH, scA];
+        saveLocal();
+        toast("Skor berhasil disimpan!");
+        render();
+      };
+    }
+
+    document.querySelectorAll("[data-del-match]").forEach(function(b){
+      b.onclick = function(){
+        if(!isAdmin){ toast("Akses ditolak"); return; }
+        var k = this.dataset.delMatch;
+        delete S.scores[k];
+        saveLocal();
+        toast("Hasil dihapus");
+        render();
+      };
+    });
+  }
+
+  if(tab=="c"){
+    if($("sched_team_filter")){
+      $("sched_team_filter").onchange = function(){
+        schedFilterTeam = this.value;
+        render();
+      };
+    }
+  }
+
+  if(tab=="x"){
+    if($("stat_team_sel")){
+      $("stat_team_sel").onchange = function(){
+        selTeamIdx = +this.value;
+        render();
+      };
+    }
+  }
+
+  if(tab=="m" && isAdmin){
+    if($("btn_save_pass")){
+      $("btn_save_pass").onclick = function(){
+        var np = $("new_admin_pass").value.trim();
+        if(!np){ toast("Password kosong"); return; }
+        Store.adminPass = np;
+        adminPassword = np;
+        saveLocal();
+        toast("Password diperbarui!");
+        $("new_admin_pass").value = "";
+      };
+    }
+
+    $("m_season_sel").onchange = function(){
+      curSeasonId = this.value;
+      S = Store.seasons[curSeasonId];
+      render();
+    };
+
+    if($("set_active_sn")){
+      $("set_active_sn").onclick = function(){
+        Store.activeSeasonId = curSeasonId;
+        saveLocal();
+        toast("Season aktif diubah ke "+S.name);
+        render();
+      };
+    }
+
+    $("add_sn_btn").onclick = function(){
+      var num = Object.keys(Store.seasons).length + 1;
+      var newId = "s" + Date.now();
+      var prevSeason = S;
+      var newTeams = prevSeason.teams ? prevSeason.teams.slice() : ["Tim 01", "Tim 02"];
+      var newProfiles = {};
+      newTeams.forEach(function(tName, idx){
+        newProfiles[idx] = { fullName: tName, photo: "" };
+      });
+
+      Store.seasons[newId] = {
+        id: newId,
+        name: "Season " + num + " (" + (new Date().getFullYear()) + ")",
+        nameLeague: prevSeason.nameLeague || "ERRC League",
+        teams: newTeams,
+        scores: {}, profiles: newProfiles
+      };
+      Store.activeSeasonId = newId;
+      curSeasonId = newId;
+      S = Store.seasons[newId];
+      saveLocal();
+      toast("Season baru dibuat!");
+      render();
+    };
+
+    if($("del_sn_btn")){
+      $("del_sn_btn").onclick = function(){
+        if(Object.keys(Store.seasons).length <= 1){ toast("Minimal 1 season"); return; }
+        if(confirm("Yakin hapus "+S.name+"?")){
+          delete Store.seasons[curSeasonId];
+          curSeasonId = Object.keys(Store.seasons)[0];
+          Store.activeSeasonId = curSeasonId;
+          S = Store.seasons[curSeasonId];
+          saveLocal();
+          toast("Season dihapus");
+          render();
+        }
+      };
+    }
+
+    if($("btn_add_team")){
+      $("btn_add_team").onclick = function(){
+        if(S.teams.length >= 30){ toast("Maksimal 30 peserta"); return; }
+        var newIdx = S.teams.length;
+        var newName = "Tim " + (newIdx < 9 ? "0" : "") + (newIdx + 1);
+        S.teams.push(newName);
+        if(!S.profiles) S.profiles = {};
+        S.profiles[newIdx] = { fullName: newName, photo: "" };
+        saveLocal();
+        toast("Peserta baru ditambahkan!");
+        render();
+      };
+    }
+
+    document.querySelectorAll("[data-del-team]").forEach(function(btn){
+      btn.onclick = function(){
+        if(S.teams.length <= 2){ toast("Minimal harus ada 2 peserta dalam liga"); return; }
+        var idx = +this.dataset.delTeam;
+        if(confirm("Hapus peserta '"+S.teams[idx]+"'?")){
+          S.teams.splice(idx, 1);
+          var newProf = {};
+          S.teams.forEach(function(t, i){
+            newProf[i] = S.profiles[idx > i ? i : i+1] || { fullName: t, photo: "" };
+          });
+          S.profiles = newProf;
+
+          var newScores = {};
+          for(var k in S.scores){
+            var q = k.split("-");
+            var h = +q[0], a = +q[1];
+            if(h !== idx && a !== idx){
+              var newH = h > idx ? h - 1 : h;
+              var newA = a > idx ? a - 1 : a;
+              newScores[newH + "-" + newA] = S.scores[k];
+            }
+          }
+          S.scores = newScores;
+          saveLocal();
+          toast("Peserta berhasil dihapus");
+          render();
+        }
+      };
+    });
+
+    $("sv").onclick=function(){
+      syncNames();
+      toast("Pengaturan liga tersimpan");
+      document.activeElement.blur();
+      render();
+    };
+
+    $("rs").onclick=function(){
+      var b=this;if(!armed){armed=true;b.textContent="Yakin? Ketuk sekali lagi";setTimeout(function(){armed=false;if(b.isConnected)b.textContent="Hapus semua skor"},3500);return}
+      armed=false;
+      if(curSeasonId !== Store.activeSeasonId){toast("Ubah ke Season aktif");return}
+      S.scores={};saveLocal();toast("Skor dihapus");render();
+    };
+  }
+}
+
+// BACKSOUND AUDIO CONTROLLER
+var audioPlaying = false;
+$("audio-toggle").onclick = function(){
+  var audio = $("bg-audio");
+  if(audioPlaying){
+    audio.pause();
+    audioPlaying = false;
+    this.textContent = "🎵";
+    toast("Backsound dimatikan");
+  } else {
+    audio.play().then(function(){
+      audioPlaying = true;
+      $("audio-toggle").textContent = "🔊";
+      toast("Backsound diputar");
+    }).catch(function(){
+      toast("Ketuk sekali lagi untuk mengizinkan audio");
+    });
+  }
+};
+
+// HANDLER LOGIN / LOGOUT
+$("btn-login-toggle").onclick = function(){
+  if(isAdmin){
+    isAdmin = false;
+    toast("Logout Admin");
+    render();
+  } else {
+    $("admin-pass-input").value = "";
+    $("login-modal").style.display = "flex";
+  }
+};
+$("btn-close-login").onclick = function(){ $("login-modal").style.display = "none"; };
+$("btn-do-login").onclick = function(){
+  var pass = $("admin-pass-input").value;
+  if(pass === adminPassword){
+    isAdmin = true;
+    $("login-modal").style.display = "none";
+    toast("Login Admin Berhasil!");
+    render();
+  } else {
+    toast("Password Salah!");
+  }
+};
+
+document.querySelectorAll("tabs button").forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll("tabs button").forEach(function(x){x.classList.remove("on")});
+    b.classList.add("on");tab=b.dataset.t;
+    if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+    render();window.scrollTo(0,0);
+  };
+});
+
+render();
+</script>
+</body>
+</html>
